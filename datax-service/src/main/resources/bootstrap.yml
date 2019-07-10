@@ -1,0 +1,33 @@
+server:
+  session-timeout: 1800
+  port: 39300
+spring:
+  application:
+    name: datax-service
+  cloud:
+    nacos:
+      discovery:
+        namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
+        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
+      config:
+        namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
+        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
+        file-extension: yml
+        group: DEFAULT_GROUP
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  devtools:
+    restart:
+      enabled: true
+
+management:
+  endpoints:
+    health:
+      sensitive: false
+      enable: true
+    web:
+      exposure:
+        include: '*'
+  security:
+    enabled: false

@@ -24,6 +24,27 @@ public final class ConfigParser {
      */
     public static Configuration parse(final String jobPath) {
         Configuration configuration = ConfigParser.parseJobConfig(jobPath);
+        autowiredConf(configuration);
+        return configuration;
+    }
+
+    /**
+     * 直接通过json配置来解析
+     * @param jobConf
+     * @return
+     */
+    public static Configuration parseWithJobConf(final String jobConf) {
+        Configuration configuration=Configuration.from(jobConf);
+        configuration=SecretUtil.decryptSecretKey(configuration);
+        autowiredConf(configuration);
+        return configuration;
+    }
+
+    /**
+     * 装载configration对象
+     * @param configuration
+     */
+    private static void autowiredConf(Configuration configuration){
 
         configuration.merge(
                 ConfigParser.parseCoreConfig(CoreConstant.DATAX_CONF_PATH),
@@ -51,7 +72,7 @@ public final class ConfigParser {
             pluginList.add(postHandlerName);
         }
         try {
-            configuration.merge(parsePluginConfig(new ArrayList<String>(pluginList)), false);
+            configuration.merge(ConfigParser.parsePluginConfig(new ArrayList<String>(pluginList)), false);
         }catch (Exception e){
             //吞掉异常，保持log干净。这里message足够。
             LOG.warn(String.format("插件[%s,%s]加载失败，1s后重试... Exception:%s ", readerPluginName, writerPluginName, e.getMessage()));
@@ -60,10 +81,8 @@ public final class ConfigParser {
             } catch (InterruptedException e1) {
                 //
             }
-            configuration.merge(parsePluginConfig(new ArrayList<String>(pluginList)), false);
+            configuration.merge(ConfigParser.parsePluginConfig(new ArrayList<String>(pluginList)), false);
         }
-
-        return configuration;
     }
 
     private static Configuration parseCoreConfig(final String path) {
