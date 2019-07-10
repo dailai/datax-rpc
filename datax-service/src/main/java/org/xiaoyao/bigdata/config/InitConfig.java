@@ -18,5 +18,4 @@ public class InitConfig {
         return new DataXCommonHandler();
     }
 
-
 }

@@ -1,7 +1,8 @@
 package org.xiaoyao.bigdata.job.service;
 
+import com.alibaba.datax.common.element.DataXJob;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
-import org.xiaoyao.bigdata.job.entity.DataXJob;
+
 import java.util.List;
 import java.util.Map;
 

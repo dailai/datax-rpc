@@ -1,19 +1,11 @@
 package org.xiaoyao.bigdata.job.service.impl;
 
-import com.alibaba.datax.common.statistics.VMInfo;
-import com.alibaba.datax.common.util.Configuration;
-import com.alibaba.datax.core.Engine;
-import com.alibaba.datax.core.util.ConfigParser;
-import com.alibaba.datax.core.util.ConfigurationValidate;
-import com.alibaba.datax.core.util.SecretUtil;
-import com.alibaba.datax.core.util.container.CoreConstant;
+import com.alibaba.datax.common.element.DataXJob;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
-import org.xiaoyao.bigdata.job.entity.DataXJob;
 import org.xiaoyao.bigdata.job.handler.AbstractJobHandler;
 import org.xiaoyao.bigdata.job.service.JobService;
 import org.xiaoyao.bigdata.report.entity.DataXReport;

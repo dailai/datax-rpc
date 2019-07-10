@@ -1,15 +1,17 @@
 package org.xiaoyao.bigdata.job.handler;
 
+import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.statistics.VMInfo;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.Engine;
+import com.alibaba.datax.core.job.meta.State;
 import com.alibaba.datax.core.util.ConfigParser;
 import com.alibaba.datax.core.util.ConfigurationValidate;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
-import org.xiaoyao.bigdata.job.entity.DataXJob;
 import org.xiaoyao.bigdata.report.entity.DataXReport;
 
 /**
@@ -26,6 +28,7 @@ public class DataXCommonHandler implements AbstractJobHandler {
 
     @Override
     public Pair<DataXJob, DataXReport> startJob(DataXJobDTO dataXJobDTO) {
+        DataXJob dataXJob=new DataXJob();
         try{
             Configuration configuration=ConfigParser.parseWithJobConf(dataXJobDTO.getJobConf());
 
@@ -41,7 +44,16 @@ public class DataXCommonHandler implements AbstractJobHandler {
 
             log.debug(configuration.toJSON());
 
+            //校验任务格式以及是否已经在执行了
             ConfigurationValidate.doValidate(configuration);
+
+            //校验完毕后在缓存中注册任务信息
+            dataXJob.setJobId(dataXJobDTO.getJobId());
+            dataXJob.setState(State.SUBMITTING.value());
+            dataXJob.setConfiguration(configuration);
+            dataXJob.setFailCount(0);
+            dataXJob.setProgress(0d);
+            DataXJobManager.INSTANCE.registJob(dataXJob);
             Engine engine = new Engine();
             engine.start(configuration);
         }catch (Exception e){

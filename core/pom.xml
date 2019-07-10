@@ -11,6 +11,21 @@
     <name>datax-core</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <java.version>1.8</java.version>
+        <spring.boot.version>2.0.1.RELEASE</spring.boot.version>
+        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
+        <spring.cloud.alibaba.version>0.2.1.RELEASE</spring.cloud.alibaba.version>
+        <lombok.version>1.18.2</lombok.version>
+        <nacos.version>1.0.0</nacos.version>
+        <derby.version>10.14.2.0</derby.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <okhttp.version>3.12.1</okhttp.version>
+        <redis.client.version>2.9.0</redis.client.version>
+    </properties>
+
+
     <dependencies>
         <dependency>
             <groupId>com.alibaba.datax</groupId>
@@ -140,8 +155,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>${project-sourceEncoding}</encoding>
                 </configuration>
             </plugin>

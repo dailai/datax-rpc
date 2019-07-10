@@ -1,7 +1,9 @@
 package com.alibaba.datax.core.job;
 
 import com.alibaba.datax.common.constant.PluginType;
+import com.alibaba.datax.common.element.DataXJob;
 import com.alibaba.datax.common.exception.DataXException;
+import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.plugin.AbstractJobPlugin;
 import com.alibaba.datax.common.plugin.JobPluginCollector;
 import com.alibaba.datax.common.spi.Reader;
@@ -27,7 +29,9 @@ import com.alibaba.datax.core.util.container.ClassLoaderSwapper;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.core.util.container.LoadUtil;
 import com.alibaba.datax.dataxservice.face.domain.enums.ExecuteMode;
+import com.alibaba.datax.dataxservice.face.domain.enums.State;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
@@ -98,9 +102,12 @@ public class JobContainer extends AbstractContainer {
 
         boolean hasException = false;
         boolean isDryRun = false;
+        DataXJob dataXJob =DataXJobManager.INSTANCE.getJob(jobId);//获取当前任务信息
         try {
             this.startTimeStamp = System.currentTimeMillis();
             isDryRun = configuration.getBool(CoreConstant.DATAX_JOB_SETTING_DRYRUN, false);
+            dataXJob.setStartTimeStamp(startTimeStamp);//更新任务开始时间
+            dataXJob.setState(State.RUNNING.value());//将任务的状态设置为运行
             if(isDryRun) {
                 LOG.info("jobContainer starts to do preCheck ...");
                 this.preCheck();
@@ -126,7 +133,9 @@ public class JobContainer extends AbstractContainer {
 
                 this.invokeHooks();
             }
+            dataXJob.setState(State.SUCCEEDED.value());//更新任务状态
         } catch (Throwable e) {
+            dataXJob.setState(State.FAILED.value());//更新任务状态
             LOG.error("Exception when job run", e);
 
             hasException = true;
@@ -178,6 +187,8 @@ public class JobContainer extends AbstractContainer {
                     this.logStatistics();
                 }
             }
+            dataXJob.setEndTimeStamp(this.endTimeStamp);
+            DataXJobManager.INSTANCE.refreshJob(dataXJob);
         }
     }
 
@@ -507,11 +518,13 @@ public class JobContainer extends AbstractContainer {
 
         List<Configuration> taskGroupConfigs = JobAssignUtil.assignFairly(this.configuration,
                 this.needChannelNumber, channelsPerTaskGroup);
-
-        LOG.info("Scheduler starts [{}] taskGroups.", taskGroupConfigs.size());
+        LOG.info("Scheduler job configuration: {}", JSONArray.toJSONString(configuration));
+        LOG.info("starts [{}] taskGroups,taskGroupConfigs: {}", taskGroupConfigs.size(), JSONArray.toJSONString(taskGroupConfigs));
 
         ExecuteMode executeMode = null;
         AbstractScheduler scheduler;
+
+        DataXJob dataXJob = DataXJobManager.INSTANCE.getJob(jobId);
         try {
         	executeMode = ExecuteMode.STANDALONE;
             scheduler = initStandaloneScheduler(this.configuration);
@@ -531,15 +544,17 @@ public class JobContainer extends AbstractContainer {
             LOG.info("Running by {} Mode.", executeMode);
 
             this.startTransferTimeStamp = System.currentTimeMillis();
-
+            dataXJob.setStartTransferTimeStamp(startTransferTimeStamp);
             scheduler.schedule(taskGroupConfigs);
-
             this.endTransferTimeStamp = System.currentTimeMillis();
         } catch (Exception e) {
             LOG.error("运行scheduler 模式[{}]出错.", executeMode);
             this.endTransferTimeStamp = System.currentTimeMillis();
             throw DataXException.asDataXException(
                     FrameworkErrorCode.RUNTIME_ERROR, e);
+        }finally {
+            dataXJob.setEndTransferTimeStamp(endTransferTimeStamp);
+            DataXJobManager.INSTANCE.refreshJob(dataXJob);
         }
 
         /**
