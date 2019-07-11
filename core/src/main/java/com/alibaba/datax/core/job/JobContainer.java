@@ -188,7 +188,7 @@ public class JobContainer extends AbstractContainer {
                 }
             }
             dataXJob.setEndTimeStamp(this.endTimeStamp);
-            DataXJobManager.INSTANCE.reportJob(dataXJob);
+            DataXJobManager.INSTANCE.refreshJob(dataXJob);
         }
     }
 

@@ -10,14 +10,11 @@ public enum  DataXJobManager {
 
     private static  Map<Long ,DataXJob> jobMap=new ConcurrentHashMap<>();
 
-    private AbstractDataxReportService dataxReportService;
-
     /**
      * 保存任务
      * @param dataXJob
      */
-    public void registJob(DataXJob dataXJob,AbstractDataxReportService dataxReportService){
-        INSTANCE.dataxReportService=dataxReportService;
+    public void registJob(DataXJob dataXJob){
         jobMap.put(dataXJob.getJobId(),dataXJob);
     }
 
@@ -59,7 +56,6 @@ public enum  DataXJobManager {
      */
     public void reportJob(DataXJob dataXJob){
         refreshJob(dataXJob);
-        INSTANCE.dataxReportService.reportJob(dataXJob);
     }
 
 }

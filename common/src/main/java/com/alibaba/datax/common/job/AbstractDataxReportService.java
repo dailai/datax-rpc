@@ -1,7 +1,6 @@
 package com.alibaba.datax.common.job;
 
 import com.alibaba.datax.common.element.DataXJob;
-import com.alibaba.datax.common.element.DataXReport;
 
 /**
  * @author ChengJie

@@ -2,29 +2,18 @@ package com.alibaba.datax.common.element;
 
 import com.alibaba.datax.common.statistics.VMInfo;
 
-/**
- * @author ChengJie
- * @desciption
- * @date 2019/7/10 10:01
- **/
-public class DataXJob {
-
+public class DataXReport {
     private Long jobId;
-
     private String jobName;
-
     private int state;
-
     /**
      * 完成进度
      */
     private Double progress;
-
     /**
      * 失败次数
      */
     private Integer failCount;
-
     /**
      * jvm快照
      */
@@ -185,4 +174,6 @@ public class DataXJob {
     public void setTotalFailRecordCount(String totalFailRecordCount) {
         this.totalFailRecordCount = totalFailRecordCount;
     }
+
+
 }

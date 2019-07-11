@@ -5,6 +5,7 @@ import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xiaoyao.bigdata.job.dao.JobDao;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.job.handler.AbstractJobHandler;
 import org.xiaoyao.bigdata.job.service.JobService;
@@ -23,6 +24,9 @@ public class JobServiceImpl implements JobService {
 
     @Autowired
     AbstractJobHandler jobHandler;
+
+    @Autowired
+    JobDao jobDao;
 
     @Override
     public void startJob(DataXJobDTO dataXJobDTO){
@@ -64,5 +68,10 @@ public class JobServiceImpl implements JobService {
     @Override
     public DataXJob get(Long jobId) {
         return null;
+    }
+
+    @Override
+    public void saveJobSnapshot(DataXJob dataXJob) {
+        jobDao.save(dataXJob);
     }
 }

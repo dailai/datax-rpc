@@ -11,6 +11,7 @@ import com.alibaba.datax.core.util.ConfigurationValidate;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.report.entity.DataXReport;
 
@@ -20,15 +21,26 @@ import org.xiaoyao.bigdata.report.entity.DataXReport;
  * @date 2019/7/10 17:31
  **/
 @Slf4j
+@Component
 public class DataXCommonHandler implements AbstractJobHandler {
     @Override
     public void beforeStartJob(Long jobId) {
+        DataXJob dataXJob=DataXJobManager.INSTANCE.getJob(jobId);
+        if(dataXJob==null){
+            dataXJob=new DataXJob();
+            //校验完毕后在缓存中注册任务信息
+            dataXJob.setJobId(jobId);
+            dataXJob.setState(State.SUBMITTING.value());
+            dataXJob.setFailCount(0);
+            dataXJob.setProgress(0d);
+        }
+        DataXJobManager.INSTANCE.registJob(dataXJob);
 
     }
 
     @Override
     public Pair<DataXJob, DataXReport> startJob(DataXJobDTO dataXJobDTO) {
-        DataXJob dataXJob=new DataXJob();
+
         try{
             Configuration configuration=ConfigParser.parseWithJobConf(dataXJobDTO.getJobConf());
 
@@ -46,13 +58,6 @@ public class DataXCommonHandler implements AbstractJobHandler {
 
             //校验任务格式以及是否已经在执行了
             ConfigurationValidate.doValidate(configuration);
-
-            //校验完毕后在缓存中注册任务信息
-            dataXJob.setJobId(dataXJobDTO.getJobId());
-            dataXJob.setState(State.SUBMITTING.value());
-            dataXJob.setFailCount(0);
-            dataXJob.setProgress(0d);
-//            DataXJobManager.INSTANCE.registJob(dataXJob);
             Engine engine = new Engine();
             engine.start(configuration);
         }catch (Exception e){
@@ -68,7 +73,7 @@ public class DataXCommonHandler implements AbstractJobHandler {
 
     @Override
     public void afterCompleteJob(Pair<DataXJob, DataXReport> jobInfo) {
-
+        DataXJobManager.INSTANCE.reportJob(jobInfo.getKey());
     }
 
     @Override

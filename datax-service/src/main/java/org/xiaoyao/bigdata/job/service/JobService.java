@@ -58,4 +58,10 @@ public interface  JobService   {
      */
     DataXJob get(Long jobId);
 
+    /**
+     * 保存任务快照
+     * @param dataXJob
+     */
+    void saveJobSnapshot(DataXJob dataXJob);
+
 }
