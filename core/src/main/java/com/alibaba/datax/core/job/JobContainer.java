@@ -188,7 +188,7 @@ public class JobContainer extends AbstractContainer {
                 }
             }
             dataXJob.setEndTimeStamp(this.endTimeStamp);
-            DataXJobManager.INSTANCE.refreshJob(dataXJob);
+            DataXJobManager.INSTANCE.reportJob(dataXJob);
         }
     }
 
@@ -618,7 +618,14 @@ public class JobContainer extends AbstractContainer {
 
         super.getContainerCommunicator().report(reportCommunication);
 
+        DataXJob dataXJob=DataXJobManager.INSTANCE.getJob(jobId);
+        dataXJob.setRunTimes(String.valueOf(totalCosts));
+        dataXJob.setAvgFlow( StrUtil.stringify(byteSpeedPerSecond));
+        dataXJob.setSpeed(String.valueOf(recordSpeedPerSecond));
+        dataXJob.setTotalFailRecordCount(String.valueOf(CommunicationTool.getTotalReadRecords(communication)));
+        dataXJob.setTotalRecordCount( String.valueOf(CommunicationTool.getTotalErrorRecords(communication)));
 
+        DataXJobManager.INSTANCE.refreshJob(dataXJob);
         LOG.info(String.format(
                 "\n" + "%-26s: %-18s\n" + "%-26s: %-18s\n" + "%-26s: %19s\n"
                         + "%-26s: %19s\n" + "%-26s: %19s\n" + "%-26s: %19s\n"

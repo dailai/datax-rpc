@@ -215,9 +215,9 @@ public class Engine {
                 }
             }
 
-//            System.exit(exitCode);
+            System.exit(exitCode);
         }
-//        System.exit(exitCode);
+        System.exit(exitCode);
     }
 
 }

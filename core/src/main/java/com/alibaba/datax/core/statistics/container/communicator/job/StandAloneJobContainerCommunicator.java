@@ -1,5 +1,7 @@
 package com.alibaba.datax.core.statistics.container.communicator.job;
 
+import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
@@ -47,6 +49,9 @@ public class StandAloneJobContainerCommunicator extends AbstractContainerCommuni
     public void report(Communication communication) {
         super.getReporter().reportJobCommunication(super.getJobId(), communication);
 
+        DataXJob dataXJob=DataXJobManager.INSTANCE.getJob(super.getJobId());
+        dataXJob.setProgress(communication.getDoubleCounter(CommunicationTool.PERCENTAGE) * 100);
+        DataXJobManager.INSTANCE.refreshJob(dataXJob);
         LOG.info(CommunicationTool.Stringify.getSnapshot(communication));
         reportVmInfo();
     }

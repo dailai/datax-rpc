@@ -18,12 +18,19 @@ public class DataXJob {
 
     private int state;
 
+    /**
+     * 完成进度
+     */
     private Double progress;
 
+    /**
+     * 失败次数
+     */
     private Integer failCount;
 
-    private Configuration configuration;
-
+    /**
+     * jvm快照
+     */
     private VMInfo vmInfo;
 
     private Integer taskCount;
@@ -36,7 +43,23 @@ public class DataXJob {
 
     private long endTransferTimeStamp;
 
-//    List<DataXTaskReport>
+    /**
+     * 任务耗时
+     */
+    private String runTimes;
+    /**
+     * 任务平均流量
+     */
+    private String avgFlow;
+    /**
+     * 任务写入速度
+     */
+    private String speed;
+
+    private String totalRecordCount;
+
+    private String totalFailRecordCount;
+
 
     public Long getJobId() {
         return jobId;
@@ -76,14 +99,6 @@ public class DataXJob {
 
     public void setFailCount(Integer failCount) {
         this.failCount = failCount;
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public VMInfo getVmInfo() {
@@ -132,5 +147,45 @@ public class DataXJob {
 
     public void setEndTransferTimeStamp(long endTransferTimeStamp) {
         this.endTransferTimeStamp = endTransferTimeStamp;
+    }
+
+    public String getRunTimes() {
+        return runTimes;
+    }
+
+    public void setRunTimes(String runTimes) {
+        this.runTimes = runTimes;
+    }
+
+    public String getAvgFlow() {
+        return avgFlow;
+    }
+
+    public void setAvgFlow(String avgFlow) {
+        this.avgFlow = avgFlow;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
+    }
+
+    public String getTotalRecordCount() {
+        return totalRecordCount;
+    }
+
+    public void setTotalRecordCount(String totalRecordCount) {
+        this.totalRecordCount = totalRecordCount;
+    }
+
+    public String getTotalFailRecordCount() {
+        return totalFailRecordCount;
+    }
+
+    public void setTotalFailRecordCount(String totalFailRecordCount) {
+        this.totalFailRecordCount = totalFailRecordCount;
     }
 }

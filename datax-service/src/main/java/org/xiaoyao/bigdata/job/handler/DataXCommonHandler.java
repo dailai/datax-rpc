@@ -50,10 +50,9 @@ public class DataXCommonHandler implements AbstractJobHandler {
             //校验完毕后在缓存中注册任务信息
             dataXJob.setJobId(dataXJobDTO.getJobId());
             dataXJob.setState(State.SUBMITTING.value());
-            dataXJob.setConfiguration(configuration);
             dataXJob.setFailCount(0);
             dataXJob.setProgress(0d);
-            DataXJobManager.INSTANCE.registJob(dataXJob);
+//            DataXJobManager.INSTANCE.registJob(dataXJob);
             Engine engine = new Engine();
             engine.start(configuration);
         }catch (Exception e){

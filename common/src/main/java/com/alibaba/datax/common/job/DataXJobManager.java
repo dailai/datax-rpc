@@ -1,7 +1,6 @@
 package com.alibaba.datax.common.job;
 
 import com.alibaba.datax.common.element.DataXJob;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,11 +10,14 @@ public enum  DataXJobManager {
 
     private static  Map<Long ,DataXJob> jobMap=new ConcurrentHashMap<>();
 
+    private AbstractDataxReportService dataxReportService;
+
     /**
      * 保存任务
      * @param dataXJob
      */
-    public void registJob(DataXJob dataXJob){
+    public void registJob(DataXJob dataXJob,AbstractDataxReportService dataxReportService){
+        INSTANCE.dataxReportService=dataxReportService;
         jobMap.put(dataXJob.getJobId(),dataXJob);
     }
 
@@ -49,6 +51,15 @@ public enum  DataXJobManager {
      */
     public void removeJob(Long jobId){
         jobMap.remove(jobId);
+    }
+
+    /**
+     * 上报任务
+     * @param dataXJob
+     */
+    public void reportJob(DataXJob dataXJob){
+        refreshJob(dataXJob);
+        INSTANCE.dataxReportService.reportJob(dataXJob);
     }
 
 }
