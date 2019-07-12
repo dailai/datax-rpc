@@ -1,6 +1,9 @@
 package com.alibaba.datax.common.job;
 
 import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.element.DataXReport;
+import javafx.util.Pair;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -8,22 +11,22 @@ public enum  DataXJobManager {
 
     INSTANCE;
 
-    private static  Map<Long ,DataXJob> jobMap=new ConcurrentHashMap<>();
+    private static  Map<Long ,Pair<DataXJob,DataXReport>> jobMap=new ConcurrentHashMap<>();
 
     /**
      * 保存任务
-     * @param dataXJob
+     * @param dataXJobInfo
      */
-    public void registJob(DataXJob dataXJob){
-        jobMap.put(dataXJob.getJobId(),dataXJob);
+    public void registJob(Pair<DataXJob,DataXReport> dataXJobInfo){
+        jobMap.put(dataXJobInfo.getKey().getJobId(),dataXJobInfo);
     }
 
     /**
      * 其实和registJob一样,怕引起歧义，所以分成两个方法
-     * @param dataXJob
+     * @param dataXJobInfo
      */
-    public void refreshJob(DataXJob dataXJob){
-        jobMap.put(dataXJob.getJobId(),dataXJob);
+    public void refreshJob(Pair<DataXJob,DataXReport> dataXJobInfo){
+        jobMap.put(dataXJobInfo.getKey().getJobId(),dataXJobInfo);
     }
 
     /**
@@ -31,7 +34,7 @@ public enum  DataXJobManager {
      * @param id
      * @return
      */
-    public DataXJob getJob(Long id){
+    public Pair<DataXJob,DataXReport> getJob(Long id){
         return jobMap.get(id);
     }
 
@@ -52,10 +55,10 @@ public enum  DataXJobManager {
 
     /**
      * 上报任务
-     * @param dataXJob
+     * @param dataXJobInfo
      */
-    public void reportJob(DataXJob dataXJob){
-        refreshJob(dataXJob);
+    public void reportJob(Pair<DataXJob,DataXReport> dataXJobInfo){
+        refreshJob(dataXJobInfo);
     }
 
 }

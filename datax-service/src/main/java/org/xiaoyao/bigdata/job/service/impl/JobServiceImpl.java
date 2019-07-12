@@ -1,6 +1,7 @@
 package org.xiaoyao.bigdata.job.service.impl;
 
 import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.element.DataXReport;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,6 @@ import org.xiaoyao.bigdata.job.dao.JobDao;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.job.handler.AbstractJobHandler;
 import org.xiaoyao.bigdata.job.service.JobService;
-import org.xiaoyao.bigdata.report.entity.DataXReport;
-
 import java.util.*;
 
 /**

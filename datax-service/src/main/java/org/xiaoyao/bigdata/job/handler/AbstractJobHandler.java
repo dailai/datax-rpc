@@ -1,9 +1,9 @@
 package org.xiaoyao.bigdata.job.handler;
 
 import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.element.DataXReport;
 import javafx.util.Pair;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
-import org.xiaoyao.bigdata.report.entity.DataXReport;
 
 /**
  * @author ChengJie

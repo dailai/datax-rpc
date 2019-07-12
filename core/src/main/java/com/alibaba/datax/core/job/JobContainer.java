@@ -2,6 +2,7 @@ package com.alibaba.datax.core.job;
 
 import com.alibaba.datax.common.constant.PluginType;
 import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.element.DataXReport;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.plugin.AbstractJobPlugin;
@@ -32,6 +33,7 @@ import com.alibaba.datax.dataxservice.face.domain.enums.ExecuteMode;
 import com.alibaba.datax.dataxservice.face.domain.enums.State;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import javafx.util.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
@@ -102,12 +104,15 @@ public class JobContainer extends AbstractContainer {
 
         boolean hasException = false;
         boolean isDryRun = false;
-        DataXJob dataXJob =DataXJobManager.INSTANCE.getJob(jobId);//获取当前任务信息
+        //获取当前任务信息
+        Pair<DataXJob,DataXReport> dataXJob =DataXJobManager.INSTANCE.getJob(jobId);
         try {
             this.startTimeStamp = System.currentTimeMillis();
             isDryRun = configuration.getBool(CoreConstant.DATAX_JOB_SETTING_DRYRUN, false);
-            dataXJob.setStartTimeStamp(startTimeStamp);//更新任务开始时间
-            dataXJob.setState(State.RUNNING.value());//将任务的状态设置为运行
+            //更新任务开始时间
+            dataXJob.getValue().setStartTimeStamp(startTimeStamp);
+            //将任务的状态设置为运行
+            dataXJob.getKey().setJobState(State.RUNNING.value());
             if(isDryRun) {
                 LOG.info("jobContainer starts to do preCheck ...");
                 this.preCheck();
@@ -133,9 +138,12 @@ public class JobContainer extends AbstractContainer {
 
                 this.invokeHooks();
             }
-            dataXJob.setState(State.SUCCEEDED.value());//更新任务状态
+            //更新任务状态
+            dataXJob.getKey().setJobState(State.SUCCEEDED.value());
         } catch (Throwable e) {
-            dataXJob.setState(State.FAILED.value());//更新任务状态
+            //更新任务状态,记录异常信息
+            dataXJob.getKey().setJobState(State.FAILED.value());
+            dataXJob.getValue().setExceptionLog(e.toString());
             LOG.error("Exception when job run", e);
 
             hasException = true;
@@ -157,8 +165,6 @@ public class JobContainer extends AbstractContainer {
             }
 
             Communication communication = super.getContainerCommunicator().collect();
-            // 汇报前的状态，不需要手动进行设置
-            // communication.setState(State.FAILED);
             communication.setThrowable(e);
             communication.setTimestamp(this.endTimeStamp);
 
@@ -181,13 +187,14 @@ public class JobContainer extends AbstractContainer {
                     if (vmInfo != null) {
                         vmInfo.getDelta(false);
                         LOG.info(vmInfo.totalString());
+                        dataXJob.getValue().setVmInfo(vmInfo.totalString());
                     }
-
                     LOG.info(PerfTrace.getInstance().summarizeNoException());
                     this.logStatistics();
                 }
             }
-            dataXJob.setEndTimeStamp(this.endTimeStamp);
+            dataXJob.getValue().setEndTimeStamp(this.endTimeStamp);
+
             DataXJobManager.INSTANCE.refreshJob(dataXJob);
         }
     }
@@ -524,7 +531,7 @@ public class JobContainer extends AbstractContainer {
         ExecuteMode executeMode = null;
         AbstractScheduler scheduler;
 
-        DataXJob dataXJob = DataXJobManager.INSTANCE.getJob(jobId);
+        Pair<DataXJob,DataXReport> dataXJob = DataXJobManager.INSTANCE.getJob(jobId);
         try {
         	executeMode = ExecuteMode.STANDALONE;
             scheduler = initStandaloneScheduler(this.configuration);
@@ -544,7 +551,7 @@ public class JobContainer extends AbstractContainer {
             LOG.info("Running by {} Mode.", executeMode);
 
             this.startTransferTimeStamp = System.currentTimeMillis();
-            dataXJob.setStartTransferTimeStamp(startTransferTimeStamp);
+            dataXJob.getValue().setStartTransferTimeStamp(startTransferTimeStamp);
             scheduler.schedule(taskGroupConfigs);
             this.endTransferTimeStamp = System.currentTimeMillis();
         } catch (Exception e) {
@@ -553,7 +560,7 @@ public class JobContainer extends AbstractContainer {
             throw DataXException.asDataXException(
                     FrameworkErrorCode.RUNTIME_ERROR, e);
         }finally {
-            dataXJob.setEndTransferTimeStamp(endTransferTimeStamp);
+            dataXJob.getValue().setEndTransferTimeStamp(endTransferTimeStamp);
             DataXJobManager.INSTANCE.refreshJob(dataXJob);
         }
 
@@ -618,15 +625,14 @@ public class JobContainer extends AbstractContainer {
 
         super.getContainerCommunicator().report(reportCommunication);
 
-        DataXJob dataXJob=DataXJobManager.INSTANCE.getJob(jobId);
-        dataXJob.setRunTimes(String.valueOf(totalCosts));
-        dataXJob.setAvgFlow( StrUtil.stringify(byteSpeedPerSecond));
-        dataXJob.setSpeed(String.valueOf(recordSpeedPerSecond));
-        dataXJob.setTotalFailRecordCount(String.valueOf(CommunicationTool.getTotalReadRecords(communication)));
-        dataXJob.setTotalRecordCount( String.valueOf(CommunicationTool.getTotalErrorRecords(communication)));
+        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(jobId);
+        dataXJob.getValue().setRunTimes(String.valueOf(totalCosts));
+        dataXJob.getValue().setAvgFlow( StrUtil.stringify(byteSpeedPerSecond));
+        dataXJob.getValue().setSpeed(String.valueOf(recordSpeedPerSecond));
+        dataXJob.getValue().setTotalFailRecordCount(String.valueOf(CommunicationTool.getTotalReadRecords(communication)));
+        dataXJob.getValue().setTotalRecordCount( String.valueOf(CommunicationTool.getTotalErrorRecords(communication)));
 
-        DataXJobManager.INSTANCE.refreshJob(dataXJob);
-        LOG.info(String.format(
+        String info=String.format(
                 "\n" + "%-26s: %-18s\n" + "%-26s: %-18s\n" + "%-26s: %19s\n"
                         + "%-26s: %19s\n" + "%-26s: %19s\n" + "%-26s: %19s\n"
                         + "%-26s: %19s\n",
@@ -647,7 +653,9 @@ public class JobContainer extends AbstractContainer {
                 String.valueOf(CommunicationTool.getTotalReadRecords(communication)),
                 "读写失败总数",
                 String.valueOf(CommunicationTool.getTotalErrorRecords(communication))
-        ));
+        );
+        LOG.info(info);
+        dataXJob.getValue().setLogStatistics(info);
 
         if (communication.getLongCounter(CommunicationTool.TRANSFORMER_SUCCEED_RECORDS) > 0
                 || communication.getLongCounter(CommunicationTool.TRANSFORMER_FAILED_RECORDS) > 0
@@ -664,7 +672,7 @@ public class JobContainer extends AbstractContainer {
                     communication.getLongCounter(CommunicationTool.TRANSFORMER_FILTER_RECORDS)
             ));
         }
-
+        DataXJobManager.INSTANCE.refreshJob(dataXJob);
 
     }
 

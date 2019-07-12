@@ -1,33 +1,70 @@
 package com.alibaba.datax.common.element;
 
-import com.alibaba.datax.common.statistics.VMInfo;
-
+/**
+ *
+ */
 public class DataXReport {
-    private Long jobId;
-    private String jobName;
-    private int state;
+
     /**
-     * 完成进度
+     * id
+     */
+    private Long id;
+
+    /**
+     * 任务id
+     */
+    private Long jobId;
+
+    /**
+     * 任务名称
+     */
+    private String jobName;
+
+    /**
+     * 任务执行状态
+     */
+    private int jobState;
+
+    /**
+     * 进度
      */
     private Double progress;
-    /**
-     * 失败次数
-     */
-    private Integer failCount;
+
+
     /**
      * jvm快照
      */
-    private VMInfo vmInfo;
+    private String vmInfo;
 
+    /**
+     * 任务组数
+     */
     private Integer taskCount;
 
+    /**
+     * 任务开始时间
+     */
     private long startTimeStamp;
 
+    /**
+     * 任务结束时间
+     */
     private long endTimeStamp;
 
+    /**
+     * 数据传输开始时间
+     */
     private long startTransferTimeStamp;
 
+    /**
+     * 数据传输结束时间
+     */
     private long endTransferTimeStamp;
+
+    /**
+     * 接收到任务的时间
+     */
+    private long createTime;
 
     /**
      * 任务耗时
@@ -42,10 +79,58 @@ public class DataXReport {
      */
     private String speed;
 
+    /**
+     * 传输总记录数
+     */
     private String totalRecordCount;
 
+    /**
+     * 传输失败记录数
+     */
     private String totalFailRecordCount;
 
+    /**
+     * 上报状态：0-未上报；1-上报成功；2-上报失败
+     */
+    private Integer status;
+
+    /**
+     * 上报失败次数
+     */
+    private Integer failCount;
+
+    /**
+     * 异常日志
+     */
+    private String exceptionLog;
+
+    private String logStatistics;
+
+    public DataXReport(Long jobId){
+        this.setProgress(0d);
+        this.setCreateTime(System.currentTimeMillis());
+        this.setAvgFlow("0");
+        this.setFailCount(0);
+        this.setRunTimes("0");
+        this.setSpeed("0");
+        this.setStatus(0);
+        this.setTaskCount(0);
+        this.setStartTimeStamp(System.currentTimeMillis());
+        this.setEndTimeStamp(startTimeStamp);
+        this.setStartTransferTimeStamp(startTimeStamp);
+        this.setEndTransferTimeStamp(startTimeStamp);
+        this.setTotalRecordCount("0");
+        this.setTotalFailRecordCount("0");
+        this.setVmInfo("");
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getJobId() {
         return jobId;
@@ -63,35 +148,19 @@ public class DataXReport {
         this.jobName = jobName;
     }
 
-    public int getState() {
-        return state;
+    public int getJobState() {
+        return jobState;
     }
 
-    public void setState(int state) {
-        this.state = state;
+    public void setJobState(int jobState) {
+        this.jobState = jobState;
     }
 
-    public Double getProgress() {
-        return progress;
-    }
-
-    public void setProgress(Double progress) {
-        this.progress = progress;
-    }
-
-    public Integer getFailCount() {
-        return failCount;
-    }
-
-    public void setFailCount(Integer failCount) {
-        this.failCount = failCount;
-    }
-
-    public VMInfo getVmInfo() {
+    public String getVmInfo() {
         return vmInfo;
     }
 
-    public void setVmInfo(VMInfo vmInfo) {
+    public void setVmInfo(String vmInfo) {
         this.vmInfo = vmInfo;
     }
 
@@ -175,5 +244,51 @@ public class DataXReport {
         this.totalFailRecordCount = totalFailRecordCount;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
 
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getFailCount() {
+        return failCount;
+    }
+
+    public void setFailCount(Integer failCount) {
+        this.failCount = failCount;
+    }
+
+    public Double getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Double progress) {
+        this.progress = progress;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getExceptionLog() {
+        return exceptionLog;
+    }
+
+    public void setExceptionLog(String exceptionLog) {
+        this.exceptionLog = exceptionLog;
+    }
+
+    public String getLogStatistics() {
+        return logStatistics;
+    }
+
+    public void setLogStatistics(String logStatistics) {
+        this.logStatistics = logStatistics;
+    }
 }

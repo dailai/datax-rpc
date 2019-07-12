@@ -1,6 +1,7 @@
 package com.alibaba.datax.core.statistics.container.communicator.job;
 
 import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.element.DataXReport;
 import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.statistics.communication.Communication;
@@ -10,6 +11,7 @@ import com.alibaba.datax.core.statistics.container.communicator.AbstractContaine
 import com.alibaba.datax.core.statistics.container.report.ProcessInnerReporter;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.dataxservice.face.domain.enums.State;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +51,8 @@ public class StandAloneJobContainerCommunicator extends AbstractContainerCommuni
     public void report(Communication communication) {
         super.getReporter().reportJobCommunication(super.getJobId(), communication);
 
-        DataXJob dataXJob=DataXJobManager.INSTANCE.getJob(super.getJobId());
-        dataXJob.setProgress(communication.getDoubleCounter(CommunicationTool.PERCENTAGE) * 100);
+        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(super.getJobId());
+        dataXJob.getValue().setProgress(communication.getDoubleCounter(CommunicationTool.PERCENTAGE) * 100);
         DataXJobManager.INSTANCE.refreshJob(dataXJob);
         LOG.info(CommunicationTool.Stringify.getSnapshot(communication));
         reportVmInfo();

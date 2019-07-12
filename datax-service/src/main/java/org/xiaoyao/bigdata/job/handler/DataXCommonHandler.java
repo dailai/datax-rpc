@@ -1,6 +1,7 @@
 package org.xiaoyao.bigdata.job.handler;
 
 import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.datax.common.element.DataXReport;
 import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.statistics.VMInfo;
 import com.alibaba.datax.common.util.Configuration;
@@ -13,7 +14,6 @@ import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
-import org.xiaoyao.bigdata.report.entity.DataXReport;
 
 /**
  * @author ChengJie
@@ -25,14 +25,11 @@ import org.xiaoyao.bigdata.report.entity.DataXReport;
 public class DataXCommonHandler implements AbstractJobHandler {
     @Override
     public void beforeStartJob(Long jobId) {
-        DataXJob dataXJob=DataXJobManager.INSTANCE.getJob(jobId);
+        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(jobId);
         if(dataXJob==null){
-            dataXJob=new DataXJob();
+            dataXJob=new Pair<>(new DataXJob(jobId),new DataXReport(jobId));
             //校验完毕后在缓存中注册任务信息
-            dataXJob.setJobId(jobId);
-            dataXJob.setState(State.SUBMITTING.value());
-            dataXJob.setFailCount(0);
-            dataXJob.setProgress(0d);
+            dataXJob.getKey().setJobState(State.SUBMITTING.value());
         }
         DataXJobManager.INSTANCE.registJob(dataXJob);
 
@@ -55,6 +52,8 @@ public class DataXCommonHandler implements AbstractJobHandler {
             log.info("\n" + Engine.filterJobConfiguration(configuration) + "\n");
 
             log.debug(configuration.toJSON());
+            //记录当前jvm参数以及cpu，内存信息
+            DataXJobManager.INSTANCE.getJob(dataXJobDTO.getJobId()).getValue().setVmInfo(vmInfo.totalString());
 
             //校验任务格式以及是否已经在执行了
             ConfigurationValidate.doValidate(configuration);
@@ -62,6 +61,8 @@ public class DataXCommonHandler implements AbstractJobHandler {
             engine.start(configuration);
         }catch (Exception e){
             log.error(e.getMessage());
+        }finally {
+
         }
         return null;
     }
@@ -73,7 +74,7 @@ public class DataXCommonHandler implements AbstractJobHandler {
 
     @Override
     public void afterCompleteJob(Pair<DataXJob, DataXReport> jobInfo) {
-        DataXJobManager.INSTANCE.reportJob(jobInfo.getKey());
+        DataXJobManager.INSTANCE.reportJob(jobInfo);
     }
 
     @Override
