@@ -105,7 +105,7 @@ public class JobContainer extends AbstractContainer {
         boolean hasException = false;
         boolean isDryRun = false;
         //获取当前任务信息
-        Pair<DataXJob,DataXReport> dataXJob =DataXJobManager.INSTANCE.getJob(jobId);
+        Pair<DataXJob,DataXReport> dataXJob =DataXJobManager.INSTANCE.getJob(configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID));
         try {
             this.startTimeStamp = System.currentTimeMillis();
             isDryRun = configuration.getBool(CoreConstant.DATAX_JOB_SETTING_DRYRUN, false);
@@ -181,7 +181,7 @@ public class JobContainer extends AbstractContainer {
 
                 this.destroy();
                 this.endTimeStamp = System.currentTimeMillis();
-                if (!hasException) {
+//                if (!hasException) {
                     //最后打印cpu的平均消耗，GC的统计
                     VMInfo vmInfo = VMInfo.getVmInfo();
                     if (vmInfo != null) {
@@ -191,7 +191,7 @@ public class JobContainer extends AbstractContainer {
                     }
                     LOG.info(PerfTrace.getInstance().summarizeNoException());
                     this.logStatistics();
-                }
+//                }
             }
             dataXJob.getValue().setEndTimeStamp(this.endTimeStamp);
 
@@ -531,7 +531,7 @@ public class JobContainer extends AbstractContainer {
         ExecuteMode executeMode = null;
         AbstractScheduler scheduler;
 
-        Pair<DataXJob,DataXReport> dataXJob = DataXJobManager.INSTANCE.getJob(jobId);
+        Pair<DataXJob,DataXReport> dataXJob = DataXJobManager.INSTANCE.getJob(this.configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID));
         try {
         	executeMode = ExecuteMode.STANDALONE;
             scheduler = initStandaloneScheduler(this.configuration);
@@ -625,7 +625,7 @@ public class JobContainer extends AbstractContainer {
 
         super.getContainerCommunicator().report(reportCommunication);
 
-        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(jobId);
+        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID));
         dataXJob.getValue().setRunTimes(String.valueOf(totalCosts));
         dataXJob.getValue().setAvgFlow( StrUtil.stringify(byteSpeedPerSecond));
         dataXJob.getValue().setSpeed(String.valueOf(recordSpeedPerSecond));

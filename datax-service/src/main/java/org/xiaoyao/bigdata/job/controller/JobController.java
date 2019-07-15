@@ -2,6 +2,7 @@ package org.xiaoyao.bigdata.job.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xiaoyao.bigdata.common.entity.ResponeResult;
@@ -25,7 +26,7 @@ public class JobController {
     JobService jobService;
 
     @PostMapping("/start")
-    public ResponeResult startJob(DataXJobDTO dataXJobDTO){
+    public ResponeResult startJob(@RequestBody DataXJobDTO dataXJobDTO){
         jobService.startJob(dataXJobDTO);
         return ResponeResult.ok();
     }

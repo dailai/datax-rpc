@@ -51,7 +51,7 @@ public class StandAloneJobContainerCommunicator extends AbstractContainerCommuni
     public void report(Communication communication) {
         super.getReporter().reportJobCommunication(super.getJobId(), communication);
 
-        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(super.getJobId());
+        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(super.getConfiguration().getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID));
         dataXJob.getValue().setProgress(communication.getDoubleCounter(CommunicationTool.PERCENTAGE) * 100);
         DataXJobManager.INSTANCE.refreshJob(dataXJob);
         LOG.info(CommunicationTool.Stringify.getSnapshot(communication));

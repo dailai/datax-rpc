@@ -6,11 +6,6 @@ package com.alibaba.datax.common.element;
 public class DataXReport {
 
     /**
-     * id
-     */
-    private Long id;
-
-    /**
      * 任务id
      */
     private Long jobId;
@@ -104,9 +99,15 @@ public class DataXReport {
      */
     private String exceptionLog;
 
+    /**
+     * 执行日志
+     */
     private String logStatistics;
 
+    private String configurationInfo;
+
     public DataXReport(Long jobId){
+        this.setJobId(jobId);
         this.setProgress(0d);
         this.setCreateTime(System.currentTimeMillis());
         this.setAvgFlow("0");
@@ -122,14 +123,7 @@ public class DataXReport {
         this.setTotalRecordCount("0");
         this.setTotalFailRecordCount("0");
         this.setVmInfo("");
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.setConfigurationInfo("");
     }
 
     public Long getJobId() {
@@ -290,5 +284,13 @@ public class DataXReport {
 
     public void setLogStatistics(String logStatistics) {
         this.logStatistics = logStatistics;
+    }
+
+    public String getConfigurationInfo() {
+        return configurationInfo;
+    }
+
+    public void setConfigurationInfo(String configurationInfo) {
+        this.configurationInfo = configurationInfo;
     }
 }

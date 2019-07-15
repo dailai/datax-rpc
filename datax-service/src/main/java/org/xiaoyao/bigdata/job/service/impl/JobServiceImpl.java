@@ -2,15 +2,21 @@ package org.xiaoyao.bigdata.job.service.impl;
 
 import com.alibaba.datax.common.element.DataXJob;
 import com.alibaba.datax.common.element.DataXReport;
+import com.alibaba.datax.common.job.DataXJobManager;
+import com.alibaba.datax.common.util.Configuration;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xiaoyao.bigdata.job.dao.JobDao;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.job.handler.AbstractJobHandler;
 import org.xiaoyao.bigdata.job.service.JobService;
 import java.util.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ChengJie
@@ -24,13 +30,20 @@ public class JobServiceImpl implements JobService {
     @Autowired
     AbstractJobHandler jobHandler;
 
-    @Autowired
-    JobDao jobDao;
-
     @Override
     public void startJob(DataXJobDTO dataXJobDTO){
-        jobHandler.beforeStartJob(dataXJobDTO.getJobId());
-        Pair<DataXJob,DataXReport> jobInfo=jobHandler.startJob(dataXJobDTO);
+
+//        ScheduledExecutorService executorService=new ScheduledThreadPoolExecutor(10,
+//                new BasicThreadFactory.Builder().namingPattern("syncdata-schedule-pool-%d").daemon(true).build());
+//
+//        ScheduledFuture<?> t =executorService.scheduleAtFixedRate(new Thread(),0,2,
+//                TimeUnit.SECONDS);
+//        t.cancel(true);
+
+        //先校验任务执行的情况,防止重复执行,如果该任务未执行则返回任务执行需要的配置信息
+        Configuration configuration=jobHandler.beforeStartJob(dataXJobDTO);
+        Pair<DataXJob,DataXReport> jobInfo=jobHandler.startJob(configuration);
+        //todo 这里还需要采用线程池方式获取further对象来回调.同时遇到异常后杀死线程释放资源,以防止内存溢出
         jobHandler.beforeCompleteJob(jobInfo);
         jobHandler.afterCompleteJob(jobInfo);
     }
@@ -71,6 +84,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void saveJobSnapshot(DataXJob dataXJob) {
-        jobDao.save(dataXJob);
+
     }
 }

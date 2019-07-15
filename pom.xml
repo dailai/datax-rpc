@@ -129,33 +129,33 @@
                 <version>${logback-classic-version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.taobao.tddl</groupId>
-                <artifactId>tddl-client</artifactId>
-                <version>${tddl.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.taobao.diamond</groupId>
-                        <artifactId>diamond-client</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>com.taobao.tddl</groupId>-->
+                <!--<artifactId>tddl-client</artifactId>-->
+                <!--<version>${tddl.version}</version>-->
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.google.guava</groupId>-->
+                        <!--<artifactId>guava</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.taobao.diamond</groupId>-->
+                        <!--<artifactId>diamond-client</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
+            <!--</dependency>-->
 
-            <dependency>
-                <groupId>com.taobao.diamond</groupId>
-                <artifactId>diamond-client</artifactId>
-                <version>${diamond.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>com.taobao.diamond</groupId>-->
+                <!--<artifactId>diamond-client</artifactId>-->
+                <!--<version>${diamond.version}</version>-->
+            <!--</dependency>-->
 
-            <dependency>
-                <groupId>com.alibaba.search.swift</groupId>
-                <artifactId>swift_client</artifactId>
-                <version>${swift-version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>com.alibaba.search.swift</groupId>-->
+                <!--<artifactId>swift_client</artifactId>-->
+                <!--<version>${swift-version}</version>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>junit</groupId>

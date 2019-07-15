@@ -132,6 +132,7 @@ venv.bak/
 .mypy_cache/
 .metadata
 bin/
+log/
 tmp/
 *.tmp
 *.bak

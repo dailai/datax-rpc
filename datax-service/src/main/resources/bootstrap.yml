@@ -1,6 +1,6 @@
 server:
   session-timeout: 1800
-  port: 39300
+  port: 21000
 spring:
   application:
     name: datax-service
@@ -8,10 +8,12 @@ spring:
     nacos:
       discovery:
         namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
-        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
+#        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
+        server-addr: 10.60.34.11:8848,10.60.34.24:8848,10.60.34.30:8848
       config:
         namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
-        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
+#        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
+        server-addr: 10.60.34.11:8848,10.60.34.24:8848,10.60.34.30:8848
         file-extension: yml
         group: DEFAULT_GROUP
   jackson:

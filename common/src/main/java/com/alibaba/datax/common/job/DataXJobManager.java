@@ -2,6 +2,7 @@ package com.alibaba.datax.common.job;
 
 import com.alibaba.datax.common.element.DataXJob;
 import com.alibaba.datax.common.element.DataXReport;
+import com.alibaba.fastjson.JSONObject;
 import javafx.util.Pair;
 
 import java.util.Map;
@@ -59,6 +60,7 @@ public enum  DataXJobManager {
      */
     public void reportJob(Pair<DataXJob,DataXReport> dataXJobInfo){
         refreshJob(dataXJobInfo);
+        System.out.println("上报任务结果："+JSONObject.toJSONString(dataXJobInfo.getValue()));
     }
 
 }

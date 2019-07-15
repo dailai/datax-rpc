@@ -2,6 +2,7 @@ package org.xiaoyao.bigdata.job.handler;
 
 import com.alibaba.datax.common.element.DataXJob;
 import com.alibaba.datax.common.element.DataXReport;
+import com.alibaba.datax.common.util.Configuration;
 import javafx.util.Pair;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 
@@ -14,15 +15,15 @@ public interface AbstractJobHandler {
 
     /**
      * 任务开始之前需校验任务是否在执行，查看其他节点是否存在此任务，查看当前节点是否需要断点续传
-     * @param jobId
+     * @param dataXJobDTO
      */
-    void beforeStartJob(Long jobId);
+    Configuration beforeStartJob(DataXJobDTO dataXJobDTO);
 
     /**
      * 启动任务
-     * @param dataXJobDTO
+     * @param configuration
      */
-    Pair<DataXJob,DataXReport> startJob(DataXJobDTO dataXJobDTO);
+    Pair<DataXJob,DataXReport> startJob(Configuration configuration);
 
     /**
      * 可以在这里考虑做一些数据的校验，如脏数据处理，如果任务失败可以持久化任务快照，然后做重试机制
