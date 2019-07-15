@@ -1,5 +1,9 @@
 package org.xiaoyao.bigdata.job.controller;
 
+import com.alibaba.nacos.api.annotation.NacosInjected;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.pojo.Instance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +13,7 @@ import org.xiaoyao.bigdata.common.entity.ResponeResult;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.job.service.JobService;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -24,6 +29,9 @@ public class JobController {
 
     @Autowired
     JobService jobService;
+
+    @NacosInjected
+    private NamingService namingService;
 
     @PostMapping("/start")
     public ResponeResult startJob(@RequestBody DataXJobDTO dataXJobDTO){
@@ -51,6 +59,11 @@ public class JobController {
 
     @PostMapping("/list")
     public ResponeResult list(Map params){
+        try {
+           List<Instance> list= namingService.getAllInstances("ods-admin-service");
+        } catch (NacosException e) {
+            e.printStackTrace();
+        }
         return ResponeResult.ok().put("list",jobService.list(params)).put("count",jobService.count(params));
     }
 
