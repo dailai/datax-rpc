@@ -60,7 +60,7 @@ public class JobController {
     @PostMapping("/list")
     public ResponeResult list(Map params){
         try {
-           List<Instance> list= namingService.getAllInstances("ods-admin-service");
+           List<Instance> list= namingService.getAllInstances("datax-service");
         } catch (NacosException e) {
             e.printStackTrace();
         }

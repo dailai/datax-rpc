@@ -23,6 +23,12 @@ spring:
     restart:
       enabled: true
 
+datax:
+  cluster:
+    config:
+      dataId: datax-service-nodes.json  #这里指定节点配置读取
+      group: DEFAULT_GROUP              #默认分组
+
 management:
   endpoints:
     health:
