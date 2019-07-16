@@ -7,13 +7,17 @@ spring:
   cloud:
     nacos:
       discovery:
-        namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
+        namespace: 47d44847-bacb-40de-a4e7-5b88830db987
+        server-addr: localhost:8848
+#        namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
 #        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
-        server-addr: 10.60.34.11:8848,10.60.34.24:8848,10.60.34.30:8848
+#        server-addr: 10.60.34.11:8848,10.60.34.24:8848,10.60.34.30:8848
       config:
-        namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
+        namespace: 47d44847-bacb-40de-a4e7-5b88830db987
+        server-addr: localhost:8848
+#        namespace: 41941b09-334d-45c9-80c6-d4282c78d71f
 #        server-addr: 10.40.6.251:8848,10.40.6.252:8848,10.40.6.253:8848
-        server-addr: 10.60.34.11:8848,10.60.34.24:8848,10.60.34.30:8848
+#        server-addr: 10.60.34.11:8848,10.60.34.24:8848,10.60.34.30:8848
         file-extension: yml
         group: DEFAULT_GROUP
   jackson:
@@ -28,14 +32,3 @@ datax:
     config:
       dataId: datax-service-nodes.json  #这里指定节点配置读取
       group: DEFAULT_GROUP              #默认分组
-
-management:
-  endpoints:
-    health:
-      sensitive: false
-      enable: true
-    web:
-      exposure:
-        include: '*'
-  security:
-    enabled: false

@@ -30,9 +30,6 @@ public class JobController {
     @Autowired
     JobService jobService;
 
-    @NacosInjected
-    private NamingService namingService;
-
     @PostMapping("/start")
     public ResponeResult startJob(@RequestBody DataXJobDTO dataXJobDTO){
         jobService.startJob(dataXJobDTO);
@@ -59,11 +56,6 @@ public class JobController {
 
     @PostMapping("/list")
     public ResponeResult list(Map params){
-        try {
-           List<Instance> list= namingService.getAllInstances("datax-service");
-        } catch (NacosException e) {
-            e.printStackTrace();
-        }
         return ResponeResult.ok().put("list",jobService.list(params)).put("count",jobService.count(params));
     }
 

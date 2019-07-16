@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xiaoyao.bigdata.cluster.service.ClusterService;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.job.handler.AbstractJobHandler;
 import org.xiaoyao.bigdata.job.service.JobService;
@@ -28,7 +29,10 @@ import java.util.concurrent.TimeUnit;
 public class JobServiceImpl implements JobService {
 
     @Autowired
-    AbstractJobHandler jobHandler;
+    private AbstractJobHandler jobHandler;
+
+    @Autowired
+    private ClusterService clusterService;
 
     @Override
     public void startJob(DataXJobDTO dataXJobDTO){
@@ -39,6 +43,8 @@ public class JobServiceImpl implements JobService {
 //        ScheduledFuture<?> t =executorService.scheduleAtFixedRate(new Thread(),0,2,
 //                TimeUnit.SECONDS);
 //        t.cancel(true);
+
+        clusterService.getClusterInfo();
 
         //先校验任务执行的情况,防止重复执行,如果该任务未执行则返回任务执行需要的配置信息
         Configuration configuration=jobHandler.beforeStartJob(dataXJobDTO);

@@ -1,4 +1,4 @@
-package org.xiaoyao.bigdata.cluster;
+package org.xiaoyao.bigdata.cluster.entity;
 
 import com.alibaba.datax.common.element.DataXJob;
 import lombok.Data;
@@ -15,7 +15,7 @@ public class DataXNode {
 
     String host;
 
-    String port;
+    int port;
 
     List<DataXJob> jobs;
 

@@ -1,4 +1,4 @@
-package org.xiaoyao.bigdata.cluster;
+package org.xiaoyao.bigdata.cluster.entity;
 
 import lombok.Data;
 
