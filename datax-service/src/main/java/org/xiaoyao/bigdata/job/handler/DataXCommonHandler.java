@@ -6,9 +6,7 @@ import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.statistics.VMInfo;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.Engine;
-import com.alibaba.datax.core.job.meta.State;
 import com.alibaba.datax.core.util.ConfigParser;
-import com.alibaba.datax.core.util.ConfigurationValidate;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
+import org.xiaoyao.bigdata.cluster.service.AbstractDataXService;
 import org.xiaoyao.bigdata.common.enums.ReportStatus;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.report.dao.DataXReportDao;
@@ -37,6 +36,9 @@ public class DataXCommonHandler implements AbstractJobHandler {
     @Autowired
     private DataXReportDao dataXReportDao;
 
+    @Autowired
+    private AbstractDataXService dataXService;
+
     /**
      * datax目录默认为/user/local/services/datax，如果是windows系统自己在配置文件里面手动设置即可
      */
@@ -49,10 +51,10 @@ public class DataXCommonHandler implements AbstractJobHandler {
      * @param dataXJobDTO
      */
     @Override
-    public Configuration beforeStartJob(DataXJobDTO dataXJobDTO) {
+    public Configuration beforeStartJob(DataXJobDTO dataXJobDTO) throws Exception {
 
         //这里先设置好环境变量，方便搜索我们的datax的目录
-        System.setProperty("datax.home","dataXHome");
+        System.setProperty("datax.home",dataXHome);
 
         Configuration configuration=ConfigParser.parseWithJobConf(dataXJobDTO.getJobConf());
 
@@ -67,21 +69,12 @@ public class DataXCommonHandler implements AbstractJobHandler {
         log.info("\n" + Engine.filterJobConfiguration(configuration) + "\n");
 
         log.debug(configuration.toJSON());
+        //nacos注册job
+        dataXService.registJob(dataXJobDTO);
         //记录当前jvm参数以及cpu，内存信息
         DataXJobManager.INSTANCE.getJob(dataXJobDTO.getJobId()).getValue().setVmInfo(vmInfo.totalString());
         DataXJobManager.INSTANCE.getJob(dataXJobDTO.getJobId()).getValue().setConfigurationInfo(Engine.filterJobConfiguration(configuration));
-
-        //校验任务格式以及是否已经在执行了
-        ConfigurationValidate.doValidate(configuration);
-
-        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(dataXJobDTO.getJobId());
-        if(dataXJob==null){
-            dataXJob=new Pair<>(new DataXJob(dataXJobDTO.getJobId()),new DataXReport(dataXJobDTO.getJobId()));
-            //校验完毕后在缓存中注册任务信息
-            dataXJob.getKey().setJobState(State.SUBMITTING.value());
-        }
-
-        DataXJobManager.INSTANCE.registJob(dataXJob);
+        BeanUtils.copyProperties(DataXJobManager.INSTANCE.getJob(dataXJobDTO.getJobId()).getKey(),dataXJobDTO);
 
         return configuration;
     }
@@ -93,7 +86,6 @@ public class DataXCommonHandler implements AbstractJobHandler {
      */
     @Override
     public Pair<DataXJob, DataXReport> startJob(Configuration configuration) {
-
         try{
             Engine engine = new Engine();
             engine.start(configuration);
@@ -119,10 +111,12 @@ public class DataXCommonHandler implements AbstractJobHandler {
      * @param jobInfo
      */
     @Override
-    public void afterCompleteJob(Pair<DataXJob, DataXReport> jobInfo) {
+    public void afterCompleteJob(Pair<DataXJob, DataXReport> jobInfo) throws Exception {
         try {
-            //RetryUtil.executeWithRetry(() -> dataXReportService.report(jobInfo.getValue()), 3, 60000, true);
-            //上报日志
+            //上报任务执行状态到nacos
+            dataXService.completeJob(jobInfo.getKey().getJobId());
+
+            //上报日志到后端admin,可以自行实现这一块业务
             BeanUtils.copyProperties(jobInfo.getKey(),jobInfo.getValue());
             dataXReportService.report(jobInfo.getValue());
         } catch (Exception e) {

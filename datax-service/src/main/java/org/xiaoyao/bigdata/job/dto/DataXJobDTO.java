@@ -12,8 +12,29 @@ import lombok.Setter;
 @Getter
 public class DataXJobDTO {
 
+    /**
+     * job id
+     */
     Long jobId;
 
+    /**
+     * 任务名称
+     */
+    String jobName;
+
+    /**
+     * 开始时间
+     */
+    private Long startTime;
+
+    /**
+     * 任务生命周期，用于标记任务是否有效
+     */
+    private Long jobLifeCycle;
+
+    /**
+     * 任务配置
+     */
     String jobConf;
 
 }

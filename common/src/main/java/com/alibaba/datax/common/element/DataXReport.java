@@ -106,6 +106,10 @@ public class DataXReport {
 
     private String configurationInfo;
 
+    public DataXReport(){
+
+    }
+
     public DataXReport(Long jobId){
         this.setJobId(jobId);
         this.setProgress(0d);

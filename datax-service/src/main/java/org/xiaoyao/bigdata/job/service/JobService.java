@@ -1,6 +1,7 @@
 package org.xiaoyao.bigdata.job.service;
 
 import com.alibaba.datax.common.element.DataXJob;
+import com.alibaba.nacos.api.exception.NacosException;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 
 import java.util.List;
@@ -17,13 +18,13 @@ public interface  JobService   {
      * 启动任务
      * @param dataXJobDTO
      */
-    void startJob(DataXJobDTO dataXJobDTO);
+    void startJob(DataXJobDTO dataXJobDTO) throws Exception;
 
     /**
      * 结束任务
      * @param jobId
      */
-    void stopJob(Long jobId);
+    void stopJob(Long jobId) throws Exception;
 
     /**
      * 暂停任务

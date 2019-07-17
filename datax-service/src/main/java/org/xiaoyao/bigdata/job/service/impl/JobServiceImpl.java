@@ -2,22 +2,15 @@ package org.xiaoyao.bigdata.job.service.impl;
 
 import com.alibaba.datax.common.element.DataXJob;
 import com.alibaba.datax.common.element.DataXReport;
-import com.alibaba.datax.common.job.DataXJobManager;
 import com.alibaba.datax.common.util.Configuration;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xiaoyao.bigdata.cluster.service.ClusterService;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.job.handler.AbstractJobHandler;
 import org.xiaoyao.bigdata.job.service.JobService;
 import java.util.*;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author ChengJie
@@ -31,11 +24,8 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private AbstractJobHandler jobHandler;
 
-    @Autowired
-    private ClusterService clusterService;
-
     @Override
-    public void startJob(DataXJobDTO dataXJobDTO){
+    public void startJob(DataXJobDTO dataXJobDTO) throws Exception {
 
 //        ScheduledExecutorService executorService=new ScheduledThreadPoolExecutor(10,
 //                new BasicThreadFactory.Builder().namingPattern("syncdata-schedule-pool-%d").daemon(true).build());
@@ -43,8 +33,6 @@ public class JobServiceImpl implements JobService {
 //        ScheduledFuture<?> t =executorService.scheduleAtFixedRate(new Thread(),0,2,
 //                TimeUnit.SECONDS);
 //        t.cancel(true);
-
-        clusterService.getClusterInfo();
 
         //先校验任务执行的情况,防止重复执行,如果该任务未执行则返回任务执行需要的配置信息
         Configuration configuration=jobHandler.beforeStartJob(dataXJobDTO);
@@ -55,7 +43,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public void stopJob(Long jobId){
+    public void stopJob(Long jobId) throws Exception {
         jobHandler.beforeStopJob(jobId);
         Pair<DataXJob,DataXReport> jobInfo=jobHandler.stopJob(jobId);
         jobHandler.afterStopJob(jobInfo);

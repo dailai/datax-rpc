@@ -35,11 +35,6 @@ public class ConfigurationValidate {
     }
 
     private static void jobValidate(Configuration allConfig) {
-        Pair<DataXJob,DataXReport> dataXJob=DataXJobManager.INSTANCE.getJob(allConfig.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID));
-        if(dataXJob!=null&&State.RUNNING.value()==dataXJob.getKey().getJobState()){
-            throw DataXException.asDataXException(
-                    FrameworkErrorCode.RUNTIME_ERROR, new RuntimeException("任务已经在执行了，请稍后再试！"));
-        }
         return;
     }
 }

@@ -6,4 +6,18 @@ public final class CommonConstant {
      */
     public static String LOAD_BALANCE_RESOURCE_MARK = "loadBalanceResourceMark";
 
+    /**
+     * nacos中注册的任务配置id
+     */
+    public static final String JOB_DATAID="datax-jobs.yml";
+
+    /**
+     * nacos中注册的节点配置id
+     */
+    public static final String NODES_DATAID="datax-nodes.yml";
+
+    /**
+     * 默认分组
+     */
+    public static final String DEFAULT_GROUP="DATAX_GROUP";
 }

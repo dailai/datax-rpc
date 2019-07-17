@@ -3,6 +3,7 @@ package org.xiaoyao.bigdata.job.handler;
 import com.alibaba.datax.common.element.DataXJob;
 import com.alibaba.datax.common.element.DataXReport;
 import com.alibaba.datax.common.util.Configuration;
+import com.alibaba.nacos.api.exception.NacosException;
 import javafx.util.Pair;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 
@@ -17,7 +18,7 @@ public interface AbstractJobHandler {
      * 任务开始之前需校验任务是否在执行，查看其他节点是否存在此任务，查看当前节点是否需要断点续传
      * @param dataXJobDTO
      */
-    Configuration beforeStartJob(DataXJobDTO dataXJobDTO);
+    Configuration beforeStartJob(DataXJobDTO dataXJobDTO) throws Exception;
 
     /**
      * 启动任务
@@ -33,7 +34,7 @@ public interface AbstractJobHandler {
     /**
      * 任务执行完毕之后上报推数任务日志
      */
-    void afterCompleteJob(Pair<DataXJob,DataXReport> jobInfo);
+    void afterCompleteJob(Pair<DataXJob,DataXReport> jobInfo) throws Exception;
 
     /**
      * 结束之前需保存当前任务快照，方便后续断点续传
