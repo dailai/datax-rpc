@@ -15,4 +15,7 @@ public interface AbstractDataXService {
     void registJob(DataXJobDTO dataXJobDTO) throws Exception;
 
     void completeJob(Long jobId) throws Exception;
+
+    void refreshJob(DataXJob dataXJob) throws Exception;
+
 }

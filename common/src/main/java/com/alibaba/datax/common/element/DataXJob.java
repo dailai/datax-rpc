@@ -1,15 +1,15 @@
 package com.alibaba.datax.common.element;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
 
 /**
  * @author ChengJie
  * @desciption
  * @date 2019/7/10 10:01
  **/
-public class DataXJob {
+public class DataXJob implements Serializable {
 
     /**
      * jobId

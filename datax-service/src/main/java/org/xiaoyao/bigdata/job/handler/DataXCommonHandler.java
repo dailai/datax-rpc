@@ -102,8 +102,13 @@ public class DataXCommonHandler implements AbstractJobHandler {
      */
     @Override
     public void beforeCompleteJob(Pair<DataXJob, DataXReport> jobInfo) {
-        jobInfo.getValue().setStatus(ReportStatus.SUCCESSED.getValue());
-        dataXReportDao.save(jobInfo.getValue());
+        try{
+            jobInfo.getValue().setStatus(jobInfo.getKey().getJobState());
+            dataXReportDao.save(jobInfo.getValue());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -113,15 +118,15 @@ public class DataXCommonHandler implements AbstractJobHandler {
     @Override
     public void afterCompleteJob(Pair<DataXJob, DataXReport> jobInfo) throws Exception {
         try {
-            //上报任务执行状态到nacos
-            dataXService.completeJob(jobInfo.getKey().getJobId());
-
             //上报日志到后端admin,可以自行实现这一块业务
             BeanUtils.copyProperties(jobInfo.getKey(),jobInfo.getValue());
             dataXReportService.report(jobInfo.getValue());
         } catch (Exception e) {
             dataXReportDao.changeStatus(jobInfo.getValue().getJobId(), ReportStatus.FAILED.getValue());
             log.error(e.getMessage());
+        }finally {
+            //上报任务执行状态到nacos
+            dataXService.completeJob(jobInfo.getKey().getJobId());
         }
     }
 

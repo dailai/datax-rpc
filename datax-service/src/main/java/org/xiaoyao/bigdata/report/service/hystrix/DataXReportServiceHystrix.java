@@ -21,7 +21,11 @@ public class DataXReportServiceHystrix  implements DataXReportService {
     @Override
     public ResponeResult report(DataXReport dataXReport) {
         //触发熔断之后保存报告快照
-        reportDao.save(dataXReport);
+        try {
+            reportDao.save(dataXReport);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return ResponeResult.ok();
     }
 }

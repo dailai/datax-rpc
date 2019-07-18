@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xiaoyao.bigdata.common.entity.ResponeResult;
 import org.xiaoyao.bigdata.job.dto.DataXJobDTO;
 import org.xiaoyao.bigdata.job.service.JobService;
-
 import java.util.Map;
 
 /**

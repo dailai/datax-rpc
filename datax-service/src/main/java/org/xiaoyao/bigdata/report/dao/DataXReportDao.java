@@ -5,6 +5,8 @@ import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +26,13 @@ public class DataXReportDao {
      * 保存快照
      * @param dataXReport
      */
-    public void save(DataXReport dataXReport){
-        try {
-            Pair<String,List> param=createInsertParam(dataXReport);
-            jdbcTemplate.update(param.getKey(),param.getValue());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+    @Transactional
+    public void save(DataXReport dataXReport) throws IllegalAccessException {
+        Pair<String,List> param=createInsertParam(dataXReport);
+        jdbcTemplate.update(param.getKey(),param.getValue());
     }
 
-
+    @Transactional
     public void changeStatus(Long jobId,Integer status){
         String sql= "update datax_report set status=?";
         jdbcTemplate.update(sql,status);
